@@ -105,10 +105,9 @@ class RequestPasswordReset(generics.GenericAPIView):
                    [email],
                    fail_silently=False
                    )
-               return Response({"message": "Password reset link sent to your email"}, status=200)
+               return Response({"success": "Password reset link sent to your email"}, status=200)
             else:
-               return Response({"message": "User not found"}, status=404)
-        return Response(serializer.errors, status=400)
+               return Response({"error": "User not found"}, status=404)
                 
 class ResetPassword(generics.GenericAPIView):
     serializer_class = ResetPasswordSerializer
@@ -131,14 +130,14 @@ class ResetPassword(generics.GenericAPIView):
         user = RegisterUser.objects.filter(email=reset_obj.email).first()
         
         if user:
-            user.set_password(request.data['password'])
+            user.set_password(new_password)
             user.save()
             
             reset_obj.delete()
             
             return Response({'success':'Password updated'})
         else: 
-            return Response({'error':'No user found'}, status=404)
+            return Response({"error":"User does not exist" }, status=400)
        
 
 
